@@ -6,9 +6,10 @@
 public class Message {
 	
 	public enum Content {
-		WHAT_IS_PRICE,
-		PRICE_IS
-		// YOU WILL HAVE TO EXTEND THIS LIST!!
+		CFP,
+		PROPOSE,
+		ACCEPT_PROPOSAL,
+                RECECT_PROPOSAL
 	}
 	
 	private Agent sender;

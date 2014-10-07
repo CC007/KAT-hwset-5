@@ -47,8 +47,8 @@ public class Producer extends Agent {
     // Handling all messages received this step, then emptying the message Vector.
     private void handleMessages() {
     	for (Message message :  messages) {
-    		if (message.content() == Message.Content.WHAT_IS_PRICE && getProduct().equals(message.what()))
-    			message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
+    		if (message.content() == Message.Content.CFP && getProduct().equals(message.what()))
+    			message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, getProduct(), sellPrice));
     		/* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
    		}
     	messages.clear();

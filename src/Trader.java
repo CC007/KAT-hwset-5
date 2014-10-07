@@ -83,7 +83,7 @@ public class Trader extends Agent {
 	// Vector.
 	private void handleMessages() {
 		for (Message message : messages) {
-			// if (message.content() == Messages.Content.PRICE_IS .......
+			// if (message.content() == Messages.Content.PROPOSE .......
 			
 			/*YOU WILL HAVE TO IMPLEMENT THIS YOURSELF*/
 			
@@ -118,7 +118,7 @@ public class Trader extends Agent {
 	private void negotiateBuy() {
 		for (Agent agent : getAgentsInRange()) {
 			if (agent instanceof Producer)
-				agent.deliverMessage(new Message(this, Message.Content.WHAT_IS_PRICE, getProduct()));
+				agent.deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
 		}
 	}
 
