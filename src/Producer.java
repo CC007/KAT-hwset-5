@@ -49,7 +49,7 @@ public class Producer extends Agent {
     	for (Message message :  messages) {
     		if (message.content() == Message.Content.CFP && getProduct().equals(message.what()))
     			message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, getProduct(), sellPrice));
-    		/* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
+                        /* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
    		}
     	messages.clear();
     	messageWaiting = false;
