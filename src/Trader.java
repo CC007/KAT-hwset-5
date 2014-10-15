@@ -12,6 +12,7 @@ public class Trader extends Agent {
     private int estBuyDairy;
     private int estSellDairy;
 
+    private int numNegotiations = 0;
     // Status Variable
     private String status;
 
@@ -92,10 +93,78 @@ public class Trader extends Agent {
     private void handleMessages() {
         for (Message message : messages) {
             if (message.content() == Message.Content.PROPOSE) {
-                //do something
-            }
+                int price;
+                if (message.sender().getType().equals("producer")) {
+                    switch (message.what()) {
+                        case "wine":
+                            price = estBuyWine;
+                            break;
+                        case "meat":
+                            price = estBuyMeat;
+                            break;
+                        case "fruit":
+                            price = estBuyFruit;
+                            break;
+                        case "dairy":
+                            price = estBuyDairy;
+                            break;
+                        default:
+                            //faal
+                            price = 0;
+                    }
 
-            /*YOU WILL HAVE TO IMPLEMENT THIS YOURSELF*/
+                    if (price >= message.number()) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
+                        numNegotiations = 0;
+                    } else {
+                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
+                        numNegotiations++;
+                    }
+                    price = (int) (price - (price - message.number()) * 0.1);
+                    switch (message.what()) {
+                        case "wine":
+                            estBuyWine = price;
+                            break;
+                        case "meat":
+                            estBuyMeat = price;
+                            break;
+                        case "fruit":
+                            estBuyFruit = price;
+                            break;
+                        case "dairy":
+                            estBuyDairy = price;
+                            break;
+                        default:
+                            //faal
+                            price = 0;
+                    }
+
+                } else if (message.sender().getType().equals("retailer")) {
+                    switch (message.sender().getProduct()) {
+                        case "wine":
+                            price = estSellWine;
+                            break;
+                        case "meat":
+                            price = estSellMeat;
+                            break;
+                        case "fruit":
+                            price = estSellFruit;
+                            break;
+                        case "dairy":
+                            price = estSellDairy;
+                            break;
+                        default:
+                            //faal
+                            price = 0;
+                    }
+
+                    if (price <= message.number()) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
+                    } else {
+                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
+                    }
+                }
+            }
         }
         messageWaiting = false;
         messages.clear();
