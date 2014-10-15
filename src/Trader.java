@@ -110,17 +110,20 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
+                            System.out.println("faal");
                             price = 0;
                     }
 
                     if (price >= message.number()) {
                         message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
                         numNegotiations = 0;
+                        buy(message.what());
+                        price = message.number();
                     } else {
                         message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
                         numNegotiations++;
+                        price = (int) (price - (price - message.number()) * 0.1);
                     }
-                    price = (int) (price - (price - message.number()) * 0.1);
                     switch (message.what()) {
                         case "wine":
                             estBuyWine = price;
@@ -135,8 +138,8 @@ public class Trader extends Agent {
                             estBuyDairy = price;
                             break;
                         default:
-                            //faal
-                            price = 0;
+                            System.out.println("faal");
+                        //faal
                     }
 
                 } else if (message.sender().getType().equals("retailer")) {
@@ -155,14 +158,144 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
+                            System.out.println("faal");
                             price = 0;
                     }
 
                     if (price <= message.number()) {
                         message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
+                        numNegotiations = 0;
+                        sell();
+                        price = message.number();
                     } else {
                         message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
+                        numNegotiations++;
+                        price = (int) (price - (price - message.number()) * 0.1);
                     }
+                    switch (message.what()) {
+                        case "wine":
+                            estSellWine = price;
+                            break;
+                        case "meat":
+                            estSellMeat = price;
+                            break;
+                        case "fruit":
+                            estSellFruit = price;
+                            break;
+                        case "dairy":
+                            estSellDairy = price;
+                            break;
+                        default:
+                            //faal
+                            System.out.println("faal");
+                    }
+                }
+            } else if (message.content() == Message.Content.CFP) {
+                int price;
+                if (message.sender().getType().equals("producer")) {
+                    switch (message.what()) {
+                        case "wine":
+                            price = estBuyWine;
+                            break;
+                        case "meat":
+                            price = estBuyMeat;
+                            break;
+                        case "fruit":
+                            price = estBuyFruit;
+                            break;
+                        case "dairy":
+                            price = estBuyDairy;
+                            break;
+                        default:
+                            //faal
+                            System.out.println("faal");
+                            price = 0;
+                    }
+                } else if (message.sender().getType().equals("retailer")) {
+                    switch (message.sender().getProduct()) {
+                        case "wine":
+                            price = estSellWine;
+                            break;
+                        case "meat":
+                            price = estSellMeat;
+                            break;
+                        case "fruit":
+                            price = estSellFruit;
+                            break;
+                        case "dairy":
+                            price = estSellDairy;
+                            break;
+                        default:
+                            //faal
+                            System.out.println("faal");
+                            price = 0;
+                    }
+                } else {
+                    //faal
+                    System.out.println("faal");
+                    price = 0;
+                }
+                message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, message.what(), price));
+            } else if (message.content() == Message.Content.ACCEPT_PROPOSAL) {
+                int price;
+                if (message.sender().getType().equals("producer")) {
+                    switch (message.what()) {
+                        case "wine":
+                            price = estBuyWine;
+                            break;
+                        case "meat":
+                            price = estBuyMeat;
+                            break;
+                        case "fruit":
+                            price = estBuyFruit;
+                            break;
+                        case "dairy":
+                            price = estBuyDairy;
+                            break;
+                        default:
+                            //faal
+                            System.out.println("faal");
+                            price = 0;
+                    }
+
+                    if (message.number() > price) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.FAILURE));
+                    } else {
+                        buy(message.what());
+                    }
+                } else if (message.sender().getType().equals("retailer")) {
+                    switch (message.sender().getProduct()) {
+                        case "wine":
+                            price = estSellWine;
+                            break;
+                        case "meat":
+                            price = estSellMeat;
+                            break;
+                        case "fruit":
+                            price = estSellFruit;
+                            break;
+                        case "dairy":
+                            price = estSellDairy;
+                            break;
+                        default:
+                            //faal
+                            System.out.println("faal");
+                            price = 0;
+                    }
+
+                    if (message.number() < price) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.FAILURE));
+                    } else {
+                        sell();
+                    }
+                }
+            } else if (message.content() == Message.Content.REJECT_PROPOSAL) {
+                message.sender().deliverMessage(new Message(this, Message.Content.CFP, message.what()));
+            } else if (message.content() == Message.Content.FAILURE) {
+                if (message.sender().getType().equals("producer")) {
+                    sell();
+                } else if (message.sender().getType().equals("retailer")) {
+                    buy(message.what());
                 }
             }
         }
@@ -206,7 +339,9 @@ public class Trader extends Agent {
     // Negotiating a sale to a Retailer.
     private void negotiateSale() {
         for (Agent agent : getAgentsInRange()) {
-            /* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
+            if (agent instanceof Retailer) {
+                agent.deliverMessage(new Message(this, Message.Content.CFP, this.getProduct()));
+            }
         }
     }
 

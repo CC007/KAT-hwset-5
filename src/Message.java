@@ -9,7 +9,8 @@ public class Message {
 		CFP,
 		PROPOSE,
 		ACCEPT_PROPOSAL,
-                REJECT_PROPOSAL
+                REJECT_PROPOSAL,
+                FAILURE
 	}
 	
 	private Agent sender;
