@@ -194,6 +194,8 @@ public class Trader extends Agent {
                 int price;
                 if (numNegotiations > 5) {
                     message.sender().deliverMessage(new Message(this, Message.Content.FAILURE));
+                    this.setProduct("none");
+                    status = "chooseProduct";
                 } else {
                     if (message.sender().getType().equals("producer")) {
                         switch (message.what()) {
@@ -328,7 +330,11 @@ public class Trader extends Agent {
         super.moveToGoal((int) Math.ceil(scape.xSize / 2), (int) Math.ceil(scape.ySize / 2));
         Vector<Agent> agentsInRange = super.getAgentsInRange();
 
-        /* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
+        for (Agent agent : agentsInRange) {
+            if (agent instanceof Retailer) {
+                status = "negotiateSale";
+            }
+        }
     }
 
     // Negotiating a buy from a Producer.
