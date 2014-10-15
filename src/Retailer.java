@@ -65,7 +65,7 @@ public class Retailer extends Agent {
                     buyPrice = 0;
             }
             if (message.content() == Message.Content.CFP) {
-                message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, getProduct(), buyPrice));
+                message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, message.what(), buyPrice));
             } else if (message.content() == Message.Content.REJECT_PROPOSAL) {
                 message.sender().deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
                 buyPrice = (int) (buyPrice - (buyPrice - message.number()) * 0.1);

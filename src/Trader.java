@@ -110,7 +110,7 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
-                            System.out.println("faal");
+                            System.out.println("faal Trader PROPOSE: price = ...BuyPrice");
                             price = 0;
                     }
 
@@ -138,12 +138,12 @@ public class Trader extends Agent {
                             estBuyDairy = price;
                             break;
                         default:
-                            System.out.println("faal");
+                            System.out.println("faal Trader PROPOSE: ...BuyPrice = price");
                         //faal
                     }
 
                 } else if (message.sender().getType().equals("retailer")) {
-                    switch (message.sender().getProduct()) {
+                    switch (message.what()) {
                         case "wine":
                             price = estSellWine;
                             break;
@@ -158,7 +158,7 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
-                            System.out.println("faal");
+                            System.out.println("faal Trader PROPOSE: price = ...SellPrice");
                             price = 0;
                     }
 
@@ -187,7 +187,7 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
-                            System.out.println("faal");
+                            System.out.println("faal Trader PROPOSE: ...SellPrice = price");
                     }
                 }
             } else if (message.content() == Message.Content.CFP) {
@@ -213,7 +213,7 @@ public class Trader extends Agent {
                                 break;
                             default:
                                 //faal
-                                System.out.println("faal");
+                            System.out.println("faal Trader CFP: price = ...BuyPrice");
                                 price = 0;
                         }
                     } else if (message.sender().getType().equals("retailer")) {
@@ -232,12 +232,12 @@ public class Trader extends Agent {
                                 break;
                             default:
                                 //faal
-                                System.out.println("faal");
+                            System.out.println("faal Trader CFP: price = ...SellPrice");
                                 price = 0;
                         }
                     } else {
                         //faal
-                        System.out.println("faal");
+                            System.out.println("faal Trader CFP: else");
                         price = 0;
                     }
                     message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, message.what(), price));
@@ -260,7 +260,7 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
-                            System.out.println("faal");
+                            System.out.println("faal Trader ACCEPT_PROPOSAL: price = ...BuyPrice");
                             price = 0;
                     }
 
@@ -285,7 +285,7 @@ public class Trader extends Agent {
                             break;
                         default:
                             //faal
-                            System.out.println("faal");
+                            System.out.println("faal Trader ACCEPT_PROPOSAL: price = ...SellPrice");
                             price = 0;
                     }
 

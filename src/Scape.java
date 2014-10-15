@@ -219,7 +219,8 @@ public class Scape {
         }
 
         updateStats();
-
+        
+        //WHYYYYYYY!!
         for (int x = 0; x < 2; x++) {
             System.out.println("");
         }
