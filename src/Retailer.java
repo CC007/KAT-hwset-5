@@ -44,65 +44,23 @@ public class Retailer extends Agent {
 
     //  Handling all messages received this step, then emptying the message Vector.
     private void handleMessages() {
-        int stockChange = 0;
-        int buyPrice;
         for (Message message : messages) {
-            switch (message.what()) {
-                case "wine":
-                    buyPrice = winePrice;
-                    break;
-                case "meat":
-                    buyPrice = meatPrice;
-                    break;
-                case "fruit":
-                    buyPrice = fruitPrice;
-                    break;
-                case "dairy":
-                    buyPrice = dairyPrice;
-                    break;
-                default:
-                    //only in case of a failure, it doesnt use buyPrice
-                    buyPrice = 0;
-            }
             if (message.content() == Message.Content.CFP) {
-                message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, message.what(), buyPrice));
+                message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, message.what(), getPrice(message.what())));
             } else if (message.content() == Message.Content.REJECT_PROPOSAL) {
                 message.sender().deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
-                buyPrice = (int) (buyPrice - (buyPrice - message.number()) * 0.1);
             } else if (message.content() == Message.Content.ACCEPT_PROPOSAL) {
-                if (message.number() > buyPrice) {
-                    //the trader cheated!
-                    message.sender().deliverMessage(new Message(this, Message.Content.FAILURE, message.what()));
-                    stockChange -= saleQuantity; //sale was cancelled
-                }
+                buy(message.what());
             } else if (message.content() == Message.Content.PROPOSE) {
-                if (message.number() > buyPrice) {
+                if (message.number() > getPrice(message.what())) {
                     message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
+                    setPrice(message.what(), (int) (getPrice(message.what()) - (getPrice(message.what()) - message.number()) * 0.1));
                 } else {
                     message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
+                    buy(message.what());
                 }
             } else if (message.content() == Message.Content.FAILURE) {
-                stockChange -= saleQuantity; //sale was cancelled
-            }
-            switch (message.what()) {
-                case "wine":
-                    wineStock += stockChange;
-                    winePrice = buyPrice;
-                    break;
-                case "meat":
-                    meatStock += stockChange;
-                    meatPrice = buyPrice;
-                    break;
-                case "fruit":
-                    fruitStock += stockChange;
-                    fruitPrice = buyPrice;
-                    break;
-                case "dairy":
-                    dairyStock += stockChange;
-                    dairyPrice = buyPrice;
-                    break;
-                default:
-                //only in case of a failure, it doesnt use stockChange
+                //Do nothing
             }
         }
         messages.clear();
