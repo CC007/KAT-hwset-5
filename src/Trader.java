@@ -17,6 +17,7 @@ public class Trader extends Agent {
     private int numNegotiations = 0;
     private int numStepsIdle = 0;
     private int backAwayCounter = 0;
+    private boolean isInSale = false;
 
     // Status Variable
     private String status;
@@ -44,26 +45,19 @@ public class Trader extends Agent {
     public void act() {
         if (messageWaiting) {
             handleMessages();
-        }
-        else if (status.equals("chooseProduct")) {
+        } else if (status.equals("chooseProduct")) {
             chooseProduct();
-        }
-        else if (status.equals("moveToProducer")) {
+        } else if (status.equals("moveToProducer")) {
             moveToProducer();
-        }
-        else if (status.equals("buyFromProducer")) {
+        } else if (status.equals("buyFromProducer")) {
             buy(getProduct());
-        }
-        else if (status.equals("negotiateBuy")) {
+        } else if (status.equals("negotiateBuy")) {
             negotiateBuy();
-        }
-        else if (status.equals("moveToRetailer")) {
+        } else if (status.equals("moveToRetailer")) {
             moveToRetailer();
-        }
-        else if (status.equals("negotiateSale")) {
+        } else if (status.equals("negotiateSale")) {
             negotiateSale();
-        }
-        if (status.equals("sellToRetailer")) {
+        } else if (status.equals("sellToRetailer")) {
             sell();
         }
     }
@@ -105,6 +99,7 @@ public class Trader extends Agent {
                             numNegotiations = 0;
                             buy(message.what());
                             setBuyPrice(message.what(), message.number());
+                            isInSale = false;
                         } else {
                             message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
                             numNegotiations++;
@@ -117,6 +112,7 @@ public class Trader extends Agent {
                             numNegotiations = 0;
                             sell();
                             setSellPrice(message.what(), message.number());
+                            isInSale = false;
                         } else {
                             message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
                             numNegotiations++;
@@ -130,6 +126,7 @@ public class Trader extends Agent {
                     message.sender().deliverMessage(new Message(this, Message.Content.FAILURE, message.what()));
                     this.setProduct("none");
                     status = "chooseProduct";
+                    isInSale = false;
                 } else {
                     switch (message.sender().getType()) {
                         case "producer":
@@ -156,6 +153,7 @@ public class Trader extends Agent {
                         sell();
                         break;
                 }
+                isInSale = false;
             } else if (message.content() == Message.Content.REJECT_PROPOSAL) {
                 message.sender().deliverMessage(new Message(this, Message.Content.CFP, message.what()));
             } else if (message.content() == Message.Content.FAILURE) {
@@ -167,6 +165,7 @@ public class Trader extends Agent {
                     case "retailer":
                         break;
                 }
+                isInSale = false;
             }
         }
         messageWaiting = false;
@@ -181,7 +180,7 @@ public class Trader extends Agent {
         Vector<Agent> agentsInRange = super.getAgentsInRange();
 
         for (Agent agent : agentsInRange) {
-            if (agent instanceof Producer && agent.getProduct() == getProduct() && backAwayCounter == 0) {
+            if (agent instanceof Producer && agent.getProduct().equals(getProduct()) && backAwayCounter == 0) {
                 status = "negotiateBuy";
             }
         }
@@ -195,7 +194,7 @@ public class Trader extends Agent {
         Vector<Agent> agentsInRange = super.getAgentsInRange();
 
         for (Agent agent : agentsInRange) {
-            if (agent instanceof Retailer && backAwayCounter == 0) {
+            if (agent instanceof Retailer && agent.getProduct().equals("none") && backAwayCounter == 0) {
                 status = "negotiateSale";
             }
         }
@@ -203,20 +202,26 @@ public class Trader extends Agent {
 
     // Negotiating a buy from a Producer.
     private void negotiateBuy() {
-        numNegotiations = 0;
-        for (Agent agent : getAgentsInRange()) {
-            if (agent instanceof Producer) {
-                agent.deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
+        if (!isInSale) {
+            isInSale = true;
+            numNegotiations = 0;
+            for (Agent agent : getAgentsInRange()) {
+                if (agent instanceof Producer) {
+                    agent.deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
+                }
             }
         }
     }
 
     // Negotiating a sale to a Retailer.
     private void negotiateSale() {
-        numNegotiations = 0;
-        for (Agent agent : getAgentsInRange()) {
-            if (agent instanceof Retailer) {
-                agent.deliverMessage(new Message(this, Message.Content.CFP, this.getProduct()));
+        if (!isInSale) {
+            isInSale = true;
+            numNegotiations = 0;
+            for (Agent agent : getAgentsInRange()) {
+                if (agent instanceof Retailer) {
+                    agent.deliverMessage(new Message(this, Message.Content.CFP, this.getProduct()));
+                }
             }
         }
     }
