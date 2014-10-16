@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Trader extends Agent {
 
+    private static final int MAX_NUM_STEPS_IDLE = 5;
+    private static final int INITIAL_BACK_AWAY_COUNTER = 7;
     // Variables for Buy & Sell Estimates
     private int estBuyFruit;
     private int estSellFruit;
@@ -13,6 +15,9 @@ public class Trader extends Agent {
     private int estSellDairy;
 
     private int numNegotiations = 0;
+    private int numStepsIdle = 0;
+    private int backAwayCounter = 0;
+
     // Status Variable
     private String status;
 
@@ -351,4 +356,35 @@ public class Trader extends Agent {
     public String getState() {
         return status;
     }
+
+    @Override
+    public void move(Site newS) {
+        if (newS.getAgent() == null) {
+            numStepsIdle = 0;
+        } else {
+            numStepsIdle++;
+        }
+        if (numStepsIdle > MAX_NUM_STEPS_IDLE && backAwayCounter == 0) {
+            numStepsIdle = 0;
+            backAwayCounter = INITIAL_BACK_AWAY_COUNTER;
+            if (this.getState().equals("moveToProducer")) {
+                status = "moveToRetailer";
+
+            } else {
+                status = "moveToProducer";
+            }
+        } else if (backAwayCounter == 1) {
+            if (this.getState().equals("moveToProducer")) {
+                status = "moveToRetailer";
+
+            } else {
+                status = "moveToProducer";
+            }
+            backAwayCounter--;
+        } else {
+            super.move(newS);
+            backAwayCounter -= (backAwayCounter == 0 ? 0 : 1);
+        }
+    }
+
 }
