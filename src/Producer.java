@@ -8,6 +8,7 @@ public class Producer extends Agent {
     private int saleQuantity = 20;
     private int upperSL = 75;
     private int lowerSL = 25;
+    private int reserved = 0;
 
     // The Producer Constructor
     public Producer(Scape controller, String food) {
@@ -50,16 +51,17 @@ public class Producer extends Agent {
     private void handleMessages() {
         for (Message message : messages) {
             if (message.content() == Message.Content.CFP && getProduct().equals(message.what())) {
-                if (stock >= saleQuantity) {
+                if (stock - reserved >= saleQuantity) {
                     message.sender().deliverMessage(new Message(this, Message.Content.PROPOSE, getProduct(), sellPrice));
-                    stock -= saleQuantity; //set apart until bought
+                    reserved += saleQuantity; //set apart until bought
                 } else {
                     message.sender().deliverMessage(new Message(this, Message.Content.FAILURE, getProduct()));
                 }
             } else if (message.content() == Message.Content.REJECT_PROPOSAL && getProduct().equals(message.what())) {
                 message.sender().deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
             } else if (message.content() == Message.Content.ACCEPT_PROPOSAL && getProduct().equals(message.what())) {
-                //the goods that were set apart are implicitly handed over to the trader
+                reserved -= saleQuantity;
+                stock -= saleQuantity;
                 sellPrice++;
             } else if (message.content() == Message.Content.PROPOSE && getProduct().equals(message.what())) {
                 if (message.number() < sellPrice) {
@@ -67,11 +69,12 @@ public class Producer extends Agent {
                     sellPrice = (int) (sellPrice - (sellPrice - message.number()) * 0.1);
                 } else {
                     message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
-                    //the goods that were set apart are implicitly handed over to the trader
+                    reserved -= saleQuantity;
+                    stock -= saleQuantity;
                     sellPrice++;
                 }
             } else if (message.content() == Message.Content.FAILURE) {
-                stock += saleQuantity; //sale was cancelled
+                reserved -= saleQuantity;
             }
         }
         messages.clear();
