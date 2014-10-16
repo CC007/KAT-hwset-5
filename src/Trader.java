@@ -181,7 +181,7 @@ public class Trader extends Agent {
         Vector<Agent> agentsInRange = super.getAgentsInRange();
 
         for (Agent agent : agentsInRange) {
-            if (agent instanceof Producer && agent.getProduct() == getProduct()) {
+            if (agent instanceof Producer && agent.getProduct() == getProduct() && backAwayCounter == 0) {
                 status = "negotiateBuy";
             }
         }
@@ -195,7 +195,7 @@ public class Trader extends Agent {
         Vector<Agent> agentsInRange = super.getAgentsInRange();
 
         for (Agent agent : agentsInRange) {
-            if (agent instanceof Retailer) {
+            if (agent instanceof Retailer && backAwayCounter == 0) {
                 status = "negotiateSale";
             }
         }
