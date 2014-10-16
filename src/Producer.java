@@ -67,6 +67,7 @@ public class Producer extends Agent {
                 if (message.number() < sellPrice) {
                     message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PROPOSAL, message.what(), message.number()));
                     sellPrice = (int) (sellPrice - (sellPrice - message.number()) * 0.1);
+                    reserved -= saleQuantity;
                 } else {
                     message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PROPOSAL, message.what(), message.number()));
                     reserved -= saleQuantity;
