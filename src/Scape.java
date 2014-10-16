@@ -20,7 +20,7 @@ public class Scape {
     int epochs = 0;
     int numProducers = 4;
     int numRetailers = 1;
-    int numTraders = 40;
+    int numTraders = 20;
     Vector<Agent> agents;
     Vector<Producer> producers;
     Vector<Retailer> retailers;

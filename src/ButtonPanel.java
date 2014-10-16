@@ -23,7 +23,7 @@ import javax.swing.text.StyledDocument;
 public class ButtonPanel extends JPanel implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    Dimension preferredSize = new Dimension(330, 650);
+    Dimension preferredSize = new Dimension(330, 660);
     Scape scape;
     JTextPane info;
     JPanel buttons1, buttons2, buttons3, body;
@@ -46,8 +46,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         info = new JTextPane();
-        info.setPreferredSize(new Dimension(270, 560));
-        info.setMaximumSize(new Dimension(270, 560));
+        info.setPreferredSize(new Dimension(270, 570));
+        info.setMaximumSize(new Dimension(270, 570));
         info.setEditable(false);
         info.setOpaque(false);
         info.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0), BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), BorderFactory.createEmptyBorder(5, 5, 5, 5))));

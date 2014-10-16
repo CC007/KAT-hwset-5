@@ -13,10 +13,10 @@ public class Retailer extends Agent {
     private int dairyPrice;
 
     // Sale variables
-    private int saleQuantity = 20;
-    private int stockDecrease = 5;
-    private int upperSL = 75;
-    private int lowerSL = 25;
+    private int saleQuantity = 40;
+    private int stockDecrease = 1;
+    private int upperSL = 50;
+    private int lowerSL = 2;
 
     // The Retailer Constructor
     public Retailer(Scape controller) {

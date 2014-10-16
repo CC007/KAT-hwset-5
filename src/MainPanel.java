@@ -93,8 +93,8 @@ import javax.swing.event.MouseInputListener;
         //Methods required by the MouseInputListener interface.
         public void mouseClicked(MouseEvent e) { 
         		labels[xSelected][ySelected].setBorder(BorderFactory.createLineBorder(Color.black));
-        		xSelected = e.getX() / (650 / xSize);
-        		ySelected = e.getY() / (650 / ySize);
+        		xSelected = (e.getX() / (650 / xSize))-1;
+        		ySelected = (e.getY() / (650 / ySize))-1;
         		labels[xSelected][ySelected].setBorder(BorderFactory.createLineBorder(Color.red));
         		scape.buttonPanel.addInfo(scape.grid[xSelected][ySelected]);
         }

@@ -4,9 +4,9 @@ public class Producer extends Agent {
     private int sellPrice;
 
     // Sale Variables
-    private int production = 10;
-    private int saleQuantity = 20;
-    private int upperSL = 75;
+    private int production = 2;
+    private int saleQuantity = 40;
+    private int upperSL = 175;
     private int lowerSL = 25;
     private int reserved = 0;
 
@@ -29,8 +29,8 @@ public class Producer extends Agent {
 
     // Increasing the Producer's stocks, called once per step, to simulate production.
     private void increaseStocks() {
-        if (stock > (100 - production)) {
-            stock = 100;
+        if (stock > (200 - production)) {
+            stock = 200;
         } else {
             stock = stock + production;
         }
