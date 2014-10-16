@@ -359,10 +359,10 @@ public class Trader extends Agent {
 
     @Override
     public void move(Site newS) {
-        if (newS.getAgent() == null) {
-            numStepsIdle = 0;
-        } else {
+        if (newS.getAgent() != null && backAwayCounter == 0) {
             numStepsIdle++;
+        } else {
+            numStepsIdle = 0;
         }
         if (numStepsIdle > MAX_NUM_STEPS_IDLE && backAwayCounter == 0) {
             numStepsIdle = 0;
