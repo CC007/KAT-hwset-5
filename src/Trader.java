@@ -205,6 +205,7 @@ public class Trader extends Agent {
         if (!isInSale) {
             isInSale = true;
             numNegotiations = 0;
+            numStepsIdle = 0;
             for (Agent agent : getAgentsInRange()) {
                 if (agent instanceof Producer) {
                     agent.deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
@@ -218,6 +219,7 @@ public class Trader extends Agent {
         if (!isInSale) {
             isInSale = true;
             numNegotiations = 0;
+            numStepsIdle = 0;
             for (Agent agent : getAgentsInRange()) {
                 if (agent instanceof Retailer) {
                     agent.deliverMessage(new Message(this, Message.Content.CFP, this.getProduct()));
