@@ -45,22 +45,22 @@ public class Trader extends Agent {
         if (messageWaiting) {
             handleMessages();
         }
-        if (status.equals("chooseProduct")) {
+        else if (status.equals("chooseProduct")) {
             chooseProduct();
         }
-        if (status.equals("moveToProducer")) {
+        else if (status.equals("moveToProducer")) {
             moveToProducer();
         }
-        if (status.equals("buyFromProducer")) {
+        else if (status.equals("buyFromProducer")) {
             buy(getProduct());
         }
-        if (status.equals("negotiateBuy")) {
+        else if (status.equals("negotiateBuy")) {
             negotiateBuy();
         }
-        if (status.equals("moveToRetailer")) {
+        else if (status.equals("moveToRetailer")) {
             moveToRetailer();
         }
-        if (status.equals("negotiateSale")) {
+        else if (status.equals("negotiateSale")) {
             negotiateSale();
         }
         if (status.equals("sellToRetailer")) {
@@ -203,6 +203,7 @@ public class Trader extends Agent {
 
     // Negotiating a buy from a Producer.
     private void negotiateBuy() {
+        numNegotiations = 0;
         for (Agent agent : getAgentsInRange()) {
             if (agent instanceof Producer) {
                 agent.deliverMessage(new Message(this, Message.Content.CFP, getProduct()));
@@ -212,6 +213,7 @@ public class Trader extends Agent {
 
     // Negotiating a sale to a Retailer.
     private void negotiateSale() {
+        numNegotiations = 0;
         for (Agent agent : getAgentsInRange()) {
             if (agent instanceof Retailer) {
                 agent.deliverMessage(new Message(this, Message.Content.CFP, this.getProduct()));
